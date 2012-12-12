@@ -21,16 +21,57 @@ vmahajan@sfu.ca\\
 \maketitle
 \begin{abstract}
 \begin{quote}
-AAAI creates proceedings, working notes, and technical reports directly from electronic source furnished by the authors. To ensure that all papers in the publication have a uniform appearance, authors must adhere to the following instructions. 
+Detecting clusters or communities in large real-world graphs such as large social or information networks is a problem of considerable interest. In general, it is the 
+organization of vertices in clusters, with many edges joining vertices of the same cluster and comparatively few edges joining vertices of different clusters. 
+In practice, one typically chooses an objective function that captures the intution as given by the definition above, and then one applies approximation algorithms
+or heuristics to extract sets of nodes which appears to be "good" with respect to that objective function.
+
+In this survey, we will start with the applications of clustering in various domains. We will describle various objective functions and will also discuss some of the
+most cited community finding papers. 
+
 \end{quote}
 \end{abstract}
 
 \section{Introduction}
 
-\section{Related Works}
+\section{Objective Functions}
+If you have clusters of a given graph as an output of a clustering algorithm, we need to have some quantitative measure of how "good" they are. We call them objective
+function which the algorithms try to optimize. The intution behind most of the objective functions is that a good cluster has many edges internally and few edges 
+pointing outside. In this section, we look at the other objective functions that are based on this intution.
 
-\section{Proposed Idea}
+
+In general, the two criterias contributes heavily to the formulation of objective function. The first is the number of edges between the members of the clusters, and 
+second is the number of edges between the members of the cluster and remainder of the network. So, based on whether an objective function is using either one or both 
+criteria in its formulation, we can divide the objective functions into two categories\cite{leskovec2010}. The first group, that we refer to as Multi-criterion scores, combines both 
+criteria into a single objective function; while the second group of objective functions uses only  a single of the two criteria. We will give a quick overview of the
+various definitions of the objective functions which falls under the two categories. 
+
+\subsection{Multi-criterion scores}
+Let $G(V,E)$ be an undirected graph with $n=|V|$ and $m=|E|$ edges. Let S be the set of nodes in the cluster, where $n_S$ is the number of nodes in S,
+$n_S=|S|$; $m_S$ the number of edges in $S$,  $m_S=|\{(u,v):u\in S, v\notin S\}|;$ and $d(u)$ is the degree of node $u$.
+
+We consider the following metrics $f(S)$ that capture the notion of a quality of the cluster. Lower value of score $f(S)$ signifies a more community-like set of 
+nodes.
+\begin{itemize}
+\item \textbf{Expansion}:  
+\item \textbf{Internal density}:  
+\item \textbf{Cut Ratio}:  
+\item \textbf{Normalized Cut}:  
+\item \textbf{Maximum-ODF(Out Degree Fraction)}  
+\item \textbf{Average-ODF}:  
+\item \textbf{Flake-ODF}: 
+\end{itemize}
+
+\subsection{Single-criterion scores}
+\begin{itemize}
+\item \textbf{Modularity}:
+\item \textbf{Modularity ratio}:
+\item \textbf{Volume}:
+\item \textbf{Edges cut}:
+\end{itemize}
+
+\section{Algorithms}
 
 \cite{test123}
-\bibliographystyle{aaai} \bibliography{testbib}
+\bibliographystyle{aaai} \bibliography{bibfile}
 \end{document}
