@@ -21,16 +21,279 @@ vmahajan@sfu.ca\\
 \maketitle
 \begin{abstract}
 \begin{quote}
-AAAI creates proceedings, working notes, and technical reports directly from electronic source furnished by the authors. To ensure that all papers in the publication have a uniform appearance, authors must adhere to the following instructions. 
+Online social networking has  become a phenomenon in the last
+few years. The growing usage of social networks has put the service providers
+under a lot of pressure to efficiently process the users queries.
+ In social networks like orkut, most of the queries access the immediate neighbors of the current node and
+neighbors of its neighbors.  Existing graph partitioning approaches focus on reducing the number
+ of inter server links, neglecting the query
+patterns. Our algorithm focuses on partitioning the graph so as to
+minimize the number of servers to be accessed in order to
+ process a query. Our results show that the proposed algorithm gives useful partitioning of social networks,
+thereby reducing inter server accesses.
+
+
 \end{quote}
 \end{abstract}
 
 \section{Introduction}
+    In the last few years, the online social networks(OSNs) have grown in huge proportion with respect to the number of users as well as its utility. The amount of usage of OSNs exceeds e-mail usage nowadays, which is remarkable.
+ OSNs are the most popular sites on the Internet. A study\footnote{http://www.news.com.au/technology/story/0,28348,25170441-5014239,00.html} reported that OSNs account for 10\% of all the Internet time worldwide. The growth can be appreciated by the fact that there was 1382\% increase in the user base of twitter in one month[Feb-Mar 09] \footnote{http://blog.nielsen.com/nielsenwire/onlinemobile/twitters-tweet-smell-of-success}.
+There can be variations of OSNs in terms of usability e.g On orkut, the users interact with each other by exchanging scraps or photographs, while on SLASHDOT, the users interact via blogs. Facebook, LinkedIn are other examples of OSNs.
+
+    The phenomenal growth in the size of OSNs has given rise to scalability issues that can be solved by distributing online social network graph among different servers. However the basis of partitioning  is a major issue. That is, the graph partitioning could be based on structural, geo-political or traffic properties, which are discussed in detail in \cite{arxviv} for twitter and orkut. In this paper, we introduce a new partitioning criterion called \texttt{hop based partitioning} which takes into consideration the typical nature of social network queries.
+
+\subsection{Hop Based Partitioning}
+
+Social network queries typically visit their one hop and two hop neighbors. The small world phenomenon links any two users on a social network with a distance of six hops. Hence, while partitioning a social network, it would be beneficial to maintain the one-hop and two-hop neighbors of a frequented query node on the same server\footnote{through the rest of the paper the server and partition terms are used interchangeably} as itself. Further, it is expected that any graph partitioning algorithm attempts to reduce the inter server edges and equally distribute the data across servers.
+
+For example, \cite{flickr} analyzed large-scale traces of information
+dissemination in the Flickr social network. Flickr allows users to create two types of links: links to favorite
+photos (called favorites in Flickr) and links to other users (called contacts in Flickr). Users may \texttt{favorite-mark} a photo
+ and share interesting photos with others. \cite{flickr} refers to users who include a photo in their favorite photos list as fans of that photo. It was observed that for less popular photos, 91\% of all fans are within two hops of the uploaders. Further, for even for top popular photos, 81\% of all fans are within two hops of uploaders. \cite{OHM} mentions that most information is found one-hop away from the query node. According to a study\cite{4}, the maximum distance between two persons is six hops. Hence, it is a reasonable assumption that a user interacts primarily within his 2-3 hop radius and at most his six hop radius.
+
+    In this project, we propose a novel probability based objective function and  an algorithm to find 
+the clusters which optimizes that. Given a social network graph $G$, our algorithm partitions the graph while 
+meeting the following constraints:
+\begin{itemize}
+\item For any node in a partition most of its two-hop neighbors lie within the same partition.
+\item All partitions are approximately equally sized.
+\end{itemize} 
+
+The paper is organized as follows. The related
+works is shown in section 2, the objective function in exaplained in section 3, We describe our algorithm  in
+ section 4 and  experimental results are shown in section 5.
+ Finally, we conclude the paper in section 6.
 
 \section{Related Works}
+  The study of graph partitioning algorithms based on different properties of social networks has been proposed by \cite{arxviv}. In the recent past, graph partitioning for dealing with scalability issues and handling large datasets has been proposed by \cite{5,6}.
 
-\section{Proposed Idea}
+    With the increased usage of social networks, the scientists have become more interested in analyzing the properties of social networks. 
+Sociologists showed that the average path distance between two Americans is 6 hops \cite{4} and \cite{8} shows
+the small world effect analysis. 
+Study of a online social network  finds the small world behavior and local clustering
+ property  \cite{9}.
+ The small world property for offline social networks has been discussed in \cite{9,10,11} 
+and it was verified for the online social network \cite{12,13}. Analysis of different structural and scale free properties has also been extensively analyzed \cite{12}.
 
-\cite{test123}
-\bibliographystyle{aaai} \bibliography{testbib}
+
+
+    The traditional graph partitioning algorithms\cite{16,17,18} partition the graph into roughly equal sized partition  and focusses on minimizing the edge cuts.
+ Further, the sociological approaches like hierarchical clustering based partitioning and natural division 
+based partitioning approaches are popularity known\cite{19}. Another genre of graph partitioning 
+algorithms that focus on producing quality partitions in less time are multilevel algorithms, which 
+include METIS\cite{20} and its modification for power law graphs\cite{21}. There are other partitioning 
+algorithms like Kernighan-Lin\cite{22} and it's linear time heuristics\cite{23} can also be used as 
+refinement algorithms.
+
+
+    In this paper, we  compare our results with METIS\cite{20}. METIS focuses on minimizing the cuts between the partitions as well as into roughly equal partitions. The METIS algorithm is divided into three phases termed as coarsening, partitioning and uncoarsening/refinement.
+ The main motivation behind the algorithm is to generate an approximate graph of the original graph, partitioning it and then retracting the coarsening phase while doing the refinement between each iteration.
+ Our algorithm also follows a hierarchical clustering approach where repeated merging of clusters is done
+ for some iteration and then the graph randomly partitioned with imposed contraints of having nearly equal 
+partitions. Finally, the refinement algorithm
+ is applied on the clusters thus obtained. We differ from METIS, in terms of our partitioning criterion, 
+our novel way of clustering and partitioning, and  the modification and the method of refinement applied 
+which is applied only once.
+
+\section{Probability Based Objective Function}
+
+   To calculate our objective function, we assume that there is an equal chance of each user of an 
+OSN to come online. However, we can easily modify our objective function if we know the probability of each user
+coming online.
+
+ Given some partitions, an evaluation criteria should be able to give a good index of 
+the quality of partitions in terms of fraction of one and two hops lying
+outside the partition and should also give importance to the past interaction between the users of OSNs. 
+  
+This index calculates the probability of one and two hops from a node to lie in different partition. 
+
+Formally, let $X$ = $\{x_1,x_2,x_3,\cdot\cdot\cdot,x_n\}$ be the nodes in an OSN, $x_i$ = $i^{th}\ node$, 
+$\{y_1, y_2, y_3,\cdot\cdot\cdot,y_j\}$ be the $j$ neighbors of $x_i$. Let $\{v_1, v_2, v_3, \cdot\cdot\cdot,
+ v_j\}$ be the number of interactions between $x_i$ and its neighbors. And $V_i = \sum_{k\in j} v_k$.
+ Let $Y^\prime$ be 
+the subset of neighbors of $x_i$ which lie in partition other than $x_i$'s. Let $Y^\prime = \{y_1^\prime, y_2^\prime, \cdot\cdot, y_k^\prime\}$. Let the interaction between $x_i$ and the users in this subset be  $V^\prime = \{v_1^\prime, v_2^\prime, \cdot\cdot, v_k^\prime\}$.
+$V_i^\prime = \sum_{p\in k} v_p^\prime$.
+
+        Let $P_{x_i}^{1-hop}$ be the probability of one-hop neighbor of $x_i$ to lie in separate partition, and $P_{x_i}^{2-hop}$ be probability of two hops from $x_i^{th}$ node to lie in the separate partition.\\
+        Clearly, $P_{x_i}^{1-hop}= \frac{V_i^\prime}{V_i}$ \\
+        $P_{x_i}^{2-hop}=\frac{1}{Number\ of\ neighbors\ of\ x_i} * \displaystyle\sum_{k=1}^j P_{x_i y_k}$, \\
+        where,\\
+        $P_{x_i y_k}$ = $\frac{v_k}{V_i}$* $P_{x_{k}}^{1-hop}$ =  Probability of two hop from  $x_{i}$ to lie  in a  partition other than  its own through $y_k$, if $x_i$ and $y_{k}$ are in the same partition.\\
+        $P_{x_i y_k}$ =  1 , if $x_i$ and $y_k$ are in the separate partition, as we assume if the one hop is on a different partition, it is almost
+certain that two hop lie in the same partition.\\
+        $Probability\ Index=\frac{1}{Total\ number\ of\ nodes}*\displaystyle\sum_{i=1}^nP_{x_i}^{2-hop}$, $n$ is the total number of nodes.\\
+
+
+        This probability index gives us an overall probability of a two hop query from a node to lie in the
+ different partition. In the following section we will propose an algorithm which optimizes this objective 
+function.
+
+\section{Our Algorithm}
+\begin{table*}[htb]
+\centering
+\begin{tabular}{|l|}%putting \begin{tabular}{|l|} gives table with side-lines.
+\hline
+\textbf{Our Algorithm}\\
+\hline
+\textbf{Input: }Graph, No of Partitions, No. of iterations\\
+\hline
+\textbf{Phase 1 - Graph Coarsening }\\
+1. Node weight calculation$()$ - Calculate the weights for each node according \\
+~~~ to the algorithm discussed in section 3.2\\
+2. Clustering$()$ - Forming clusters according to the sorted order\\
+~~~ of the weights.\\
+3. Graph formation from clusters$()$ - Consider a cluster as a node for the\\
+~~~ graph and collapse the edges to form a graph\\
+3. Repeat step 1-3 for the desired number of iterations.\\
+\textbf{Phase 2 - Partitioning}\\
+ Randomly allocate nodes into the desired number of clusters. We can use any traditional\\
+ approach towards graph partitioning, in our algorithm  we are using a randomized one\\
+
+\textbf{Phase 2 - Refining}\\
+ Refine the partitions using kenighan-Lin algorithm or the modified one.\\
+\hline
+\end{tabular}
+%\vskip -0.1in
+\caption{Our Algorithm}
+\label{alg}
+\end{table*}
+
+In this section, we introduce our graph partitioning algorithm. A social network  partitioning algorithm is expected to reduce inter server accesses requiring neighbors and the neighbors of neighbors of a query nodes to be present in the same server as itself. 
+ To reduce the partitioning overhead, it is important that inter server links be reduced while trying to maximize the number of nodes for which its one and two hop neighbors be on the same server as itself.
+ Further, in order to equally distribute the workload across servers and optimally use the servers used, it is
+ essential that the partitions size should be approximately equal. Our algorithm attempts to fulfil 
+ the above requirements while attempting to maximize the number of nodes for which a majority of its 
+one-hop neighbors and with next priority its 2-hop neighbors are included within the same server.
+ Our algorithm is divided into three phases, namely the graph coarsening phase, partitioning 
+phase and the refinement phase. The graph coarsening phase reduces the size of the original graph by some
+factor by clustering the nodes \emph{intelligently}.  A weight function is used 
+in order to decide which nodes should be clustered  during the coarsening phase. In the partitioning phase, we 
+randomly generate partitions of the coarsened graph. The refinement phase next 
+reduces the inter partition edges by making slight modifications to the partitioned graph. We next give 
+definitions of commonly used terms followed by a detailed description of each of the phases.
+
+
+
+\subsection{Definitions}
+\textbf {\it{Social Network Graph :} }The users in the social network
+form the nodes of the graph while the relationships between
+the users form the edges of the social network graph.\\
+\textbf{\it{k-hop neighbor :}} A node is said to be a k-hop neighbor of a
+query node if there are  $K$-edges separating the node
+from the query node. A one hop neighbor can also be a two hop neighbor and so on in case of triangles present in the graph
+
+\subsection{Coarsening Phase}
+
+The aim of this phase is to produce an approximate partitioning of the original graph. Our approach is a heirarchical one. 
+We start with the original graph and then we try to reduce the graph size by \emph{intelligently} clustering
+nodes at each level. After clustering nodes, we form a new graph with clusters from the previous level treated
+as nodes in the current level. After repeating the steps for some iterations, we apply a traditional graph
+partitioning algorithm to \emph{latest} graph. And then we do the refining on the produced clusters to get
+the desired output. In the following sections, we will describe our \emph{intelligent} clustering approach at
+each level and then we will continue our discussion with the explanation of the refining algorithm.
+\begin{itemize} % 1
+
+\item \textbf{Graph Definition:}
+
+Graph  $G$=$(V,E)$, where $V$ = $\{v_1,v_2,v_3,\cdot\cdot\cdot,v_n\}$ ,$v_i$ represents a cluster of nodes. 
+In the first level, $v_i$ consists of only single node and $E$ is the edge set which consists of $e_{ij}$ i.e the number of interactions between the $v_i$ and $v_j$ i.e for any $v_i$ and $v_j$,if there are $k$ edges between 
+the two then $e_{ij}$ will be equal to $k$, for the first level $e_{ij}=number\ of\ interactions\ between\ v_i\ and\ v_j$.\footnote{number of interactions might the average number of times user $v_i$ and $v_j$ have interacted
+with eachother} 
+
+\end{itemize} % 1
+
+\begin{itemize} % 1
+
+\item \textbf{Node Weight Calculation:} In this project, we adopt a probability based weight function. 
+Nodes of higher weight values are later picked as seeds during the process of clustering. 
+
+\begin{itemize} %2
+
+\item \textbf{Probability based weight function:}  
+In section 3, we described the $P_{x_i}^{2-hop}$ as the probability of two hops from $x_i^{th}$ to lie in separate
+partition. To calculate the weight for each node $x_i$, we calculate $P_{x_i}^{2-hop}$ assuming the nodes and its 
+neighbors are in one cluster and rest of the nodes are in separate cluster. Higher the weight, more are the
+chances that even if we have the node and its neighbors in one cluster, still there is high chance of two hops
+from node $x_i$ lying in separate cluster. So we start by clustering $\emph{low weight}$ nodes and we continue
+ in ascending order.
+ 
+
+
+\end{itemize} % 2
+
+
+
+\item \textbf{Clustering Algorithm:} The algorithm behaves like a hierarchical clustering algorithm where at each level clusters are formed by clustering the clusters of the previous level. The clustering algorithm varies based on the weight picking function used as described below.
+
+
+
+For a given level $i$, the nodes of the graph at level $i$ are processed in decreasing order of weight. Initially the input graph forms the input of the clustering algorithm for level one. For each level $i >1$, a new graph is generated which is fed as input to the clustering algorithm.
+
+\begin{itemize} % 2
+
+\item \textbf{Probability based clustering:} Each selected node assigns all its immediate neighbors to a new cluster. 
+A neighbor that has already been assigned to another cluster in the same iteration of level is ignored. 
+The process is repeated until every node is assigned some cluster number.
+
+
+
+\end{itemize} % 2
+
+A predefined cluster size is set as:\\
+
+$Cluster$ $Size$ = ($Number$ $of$ $Nodes$ / $Number$ $of$ $partitions$) $+$/$-$ $deviation$ $value$.\\
+
+where $deviation$ $value$= $x\%$ of ($Number$ $of$ $Nodes$ / $Number$ $of$ $partitions$) for some user defined value of $x$.\\ 
+
+
+The user defined value $x$ in the equation above is referred to as the "limit value" through the rest of the paper.
+
+The size of any cluster is required to be less than the predefined $Cluster$ $Size$. If no node can be selected as a seed node as on selecting it would be giving rise to a cluster that exceeds the $cluster$ $size$, then some heuristics applied to cluster the remaining nodes in a graph.  
+
+A cluster that cannot accommodate further nodes is marked and the new graph formed ignores the node representing this cluster for further clustering. 
+
+
+
+\item \textbf{Graph Formation from Clusters:} For the first level before the algorithm starts, each node of the input graph is represented as a cluster in itself. After the first level of clustering at level one, a new graph is generated to act as the input node for level two on which the four process are repeated. A new graph $G_i=(V_i, E_i)$ is formed for the clustering at level $i > 1$ after the clustering at level $i-1$. Each cluster formed at a given level $i-1$ is denoted as a new node. Hence the number of clusters at level $i-1$ form the number of nodes at level $i$. The intra cluster edges form the edge set $E_i$ of the graph $G_i$.
+
+
+
+
+\end{itemize} % 1
+
+\subsection{Partitioning Phase}
+After coarsening the graph, we can apply any traditional graph partitioning approaches to partitiong it. In our
+case, we are randomly select nodes and put them in partitions. While partitioning we also make sure that the
+size of does not differ by large quantity i.e they should be of nearly equal size.
+%\end{itemize} % 1
+
+ 
+\subsection{Refinement Phase}
+When the required number of partitions are formed, it gives us an approximate partition of the graph. To refine the partitions, 
+we use a modified form of Kernighan-Lin algorithm\cite{22}.
+
+
+    The Kernighan-Lin algorithm starts with initial bipartitions of the graph and then iteratively optimizes it using a greedy approach. The Kernighan-Lin algorithm is divided into 
+two phases, in the first phase, we consider a pair of nodes, with each nodes from different partitions. Now, a gain value $\delta$$Q$ is calculated for all possible pairs, which is the change in the number of edges when the nodes in the pair are swapped. The pair with the maximum  gain is marked for swapping so that they are never marked again in this phase. This continues until all the pairs are marked. In the next phase, the algorithm examine the sequence of the swapped pairs and the sequence which results into the maximum gain is selected and the actual swapping takes place. This results into a locally optimized graph and the two phases are repeated till there is no further gain in the edges between the partitions.
+
+
+    We modify one of the phases of  Kernighan-Lin algorithm for our criterion. To be precise, we change the definition of $\delta$$Q$ for us. In the Kernighan-Lin algorithm, $\delta$$Q$ is the change in the edges cuts between the partitions when the nodes are swapped. Let $a$, $b$ be two nodes that lie in different partitions. Let $I_a$ be the internal cost for $a$, i.e the neigbors of $a$ that lies in the same partition as of $a$ and  $E_a$ be the external cost for the node $a$, i.e the number of neighbors of $a$ that lie in the separate partition. Similarily $E_b$ and $I_b$ are the external cost and internal cost for the node $b$. Now let $D_a$ = $E_a$ - $I_a$ and $D_b$ = $E_b$ - $I_b$ , i.e the difference of external and internal costs. If $a$ and $b$ are interchanged then the gain i.e $\delta$$Q$ will be $D_a + D_b -2C_{a,b}$. We make changes in the internal, external and $C_{a,b}$ to fit our purpose of decreasing the probability of the two hops from one node lying in the different partitions. We define internal cost $I_{ap}$ as the probability of an edge of node $E_{ap}$ lying in the same partition as of $a$ ,external cost as probability of an edge of node $a$ lying in a separate partition. Hence,\\ 
+\begin{displaymath}I_{a}=\frac{I_a}{Degree\ of\ node\ a }\\\end{displaymath},
+\\\begin{displaymath}E_{a}=\frac{E_a}{Degree\ of\ node\ a}\\\end{displaymath} and\\
+\begin{displaymath}2C_{a,b}=\frac{1}{Degree\ of\ node\ a}+\frac{1}{Degree\ of\ node\ b}\\\end{displaymath}
+
+
+    As the original Kernighan-Lin algorithm focuses on reducing the edges between the partitions, our modified one reduces the probability of one hop of the nodes to lie in the separate partition. 
+      The rest of the kernighan-Lin algorithm works in the original way. Experiments shows that it not only reduces the probability of one hop to lie outside the partitions but also decreases the edge cuts. The same approach could be applied to the linear heuristics from the feduccia and matthews 
+algorithm\cite{23} which can make it more efficient in terms of time taken to refine the partitions.
+ 
+
+
+
+
+\section{Experiments and Results}
+
+\section{Conclusion}
+\bibliographystyle{aaai} \bibliography{xbib}
 \end{document}
