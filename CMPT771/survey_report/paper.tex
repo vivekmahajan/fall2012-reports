@@ -22,30 +22,122 @@ vmahajan@sfu.ca\\
 \maketitle
 \begin{abstract}
 \begin{quote}
-Detecting clusters or communities in large real-world graphs such as large social or information networks is a problem of considerable interest. In general, it is the 
-organization of vertices in clusters, with many edges joining vertices of the same cluster and comparatively few edges joining vertices of different clusters. 
-In practice, one typically chooses an objective function that captures the intution as given by the definition above, and then one applies approximation algorithms
-or heuristics to extract sets of nodes which appears to be "good" with respect to that objective function.
+Detecting clusters or communities in large real-world graphs such as large
+social or information networks is a problem of considerable interest. In
+general, it is the organization of vertices in clusters, with many edges
+joining vertices of the same cluster and comparatively few edges joining
+vertices of different clusters.  In practice, one typically chooses an
+objective function that captures the intution as given by the definition above,
+and then one applies approximation algorithms or heuristics to extract sets of
+nodes which appears to be "good" with respect to that objective function.
 
-In this survey, we will start with the applications of clustering in various domains. We will describle various objective functions and will also discuss some of the
-most cited community finding papers. 
+In this survey, we will start with the applications of clustering in various
+domains. We will describle various objective functions and will also discuss
+some of the most cited community finding papers. 
 
 \end{quote}
 \end{abstract}
 
 \section{Introduction}
+The origin of graph theory dates back to Euler's solution of the puzzle of
+Konigsberg's bridges in 1736.  Since then a lot has been learned about graphs
+and their mathematical properties. It is arguably the most widely adopted
+representation which can be used to abstract lots of  real world problems. The
+problems in Biology, sociology and information networks can be formulated as
+graphs, and thus the graph analysis has become crucial to understand the
+features of these systems. Recently, with faster processors and plenty of
+computational resources, researchers can process and analyze huge amount of
+data, which wasn't possible in earlier times.
 
+Graphs representing real systems are more often not regular graphs. Some are
+random graph with higly homogeneous degree distribution. Real networks are not
+random graphs, as they display inhomogeneities, revealing a high level of order
+and organization, in which high degree vertices can co-exist with low degree
+vertices. Furthermore, the distribution of edges is not only globally, but also
+locally inhomogeneous, with high number of edges within some group of vertices,
+and low number of edges between these groups. This special feature of real
+networks is called community structure or clustering. Communities, also called
+clusters or modules, are groups of vertices which most likely share some common
+properties. 
+
+\begin{figure}
+%\begin{minipage}[htb]{0.48\linewidth}
+\includegraphics[scale=0.40]{pics/intro.eps}
+\caption{A simple graph with three communities, enclosed by the dashed circles.}
+\label{fig:bipart}
+%\end{minipage}
+\end{figure}
+
+The communities exists in society, like families, working and friendship
+circles, towns, nations etc.  The ubiquity of Internet has also resulted into
+creation of virtual groups like online communities in social networks like
+Facebook or Linkedin. Communities also occur in many networked systems from
+biology, computer science, economics, politics etc.  In protein-protein
+interaction networks, communities are likely to group proteins having the same
+functional property in the cell. In WWW the may correspond to groups of pages
+dealing with same related topics, and so on.
+
+
+In WWW, clustering users who hvae similar interests and who are geografically
+near to each other may improve the performance of services provided on the
+World Wide Web, where each cluster of clients could be served by a dedicated
+mirror server. Clustering can be used  to generate reccomendations on
+e-commerce websites, e.g users with similar interests can be clustered and
+could be given appropriate reccomendation.  Clusters in large sparse graphs can
+be used to create data structures in order to efficiently store the graph data
+and to handle navigational queries, like path searches. It can also used in
+case of Ad hoc networks, as they normally don't maintain a central routing
+tables. Also, clustering can be used in case of caching of web pages as well.
+
+The goal of detecting communities in graphs is to identify the clusters and,
+more often, their hierarchical organization, by using the structure properties
+of the graph. The problem itself is very old and have lots of proposed
+algorithms in different disciplines.
+
+The first analysis of community structure was carried out by Weiss et al. in
+1957, who searched for group of workers in a government agency. Even earlier
+work was done in finding cluters of people in small political bodeis, based on
+the similarity of their voting pattern.
+
+Finding graph communities is also popular in computer science. In parallel
+computing, it is quite common to find out the best way to allocate tasks to
+processors so as to minimize the communications between them. This is also
+called graph partitioning problem which will be dicussed in the later sections.
+In a seminal paper appeared in 2002, Girvan and Newman proposed a new algorithm
+for finding the edges lying between communities and iteratively removing them
+to find the clusters \cite{new2002}. After this paper, the field was revived and people
+gave lots of sophisticated algorithms to tackle this problem.
+
+In this survery, we try to cover some of the most popular algorithms in this
+area. We start with giving some examples of communities in Real-world networks.
+In section 2, we will give definition of various objective functions used
+nowaday. We will continue the discussion with explaining one of the most widely
+used objective function in section 3. Followed by explanation of some
+traditional approaches in section 5, 6, 7 and 8. We will then give a brief
+overview of a more recent method in section 9 and then we will conclude in
+section 10.
+\subsection{Communities in Real-World Networks}
 \section{Objective Functions}
-If you have clusters of a given graph as an output of a clustering algorithm, we need to have some quantitative measure of how "good" they are. We call them objective
-function which the algorithms try to optimize. The intution behind most of the objective functions is that a good cluster has many edges internally and few edges 
-pointing outside. In this section, we look at the other objective functions that are based on this intution.
+If you have clusters of a given graph as an output of a clustering algorithm,
+we need to have some quantitative measure of how "good" they are. We call them
+objective function which the algorithms try to optimize. The intution behind
+most of the objective functions is that a good cluster has many edges
+internally and few edges pointing outside. In this section, we look at the
+other objective functions that are based on this intution.
 
 
-In general, the two criterias contributes heavily to the formulation of objective function. The first is the number of edges between the members of the clusters, and 
-second is the number of edges between the members of the cluster and remainder of the network. So, based on whether an objective function is using either one or both 
-criteria in its formulation, we can divide the objective functions into two categories\cite{leskovec2010}. The first group, that we refer to as Multi-criterion scores, combines both 
-criteria into a single objective function; while the second group of objective functions uses only  a single of the two criteria. We will give a quick overview of the
-various definitions of the objective functions which falls under the two categories. 
+In general, the two criterias contributes heavily to the formulation of
+objective function. The first is the number of edges between the members of the
+clusters, and second is the number of edges between the members of the cluster
+and remainder of the network. So, based on whether an objective function is
+using either one or both criteria in its formulation, we can divide the
+objective functions into two categories\cite{leskovec2010}. The first group,
+that we refer to as Multi-criterion scores, combines both criteria into a
+single objective function; while the second group of objective functions uses
+only  a single of the two criteria. We will give a quick overview of the
+various definitions of the objective functions which falls under the two
+categories.
+
 
 \subsection{Multi-criterion scores}
 Let $G(V,E)$ be an undirected graph with $n=|V|$ and $m=|E|$ edges. Let S be the set of nodes in the cluster, where $n_S$ is the number of nodes in S,
@@ -55,13 +147,13 @@ We consider the following metrics $f(S)$ that capture the notion of a quality of
 nodes.
 \begin{itemize}
 \item \textbf{conductance}: $f(S) = \frac{c_S}{c m_S+c_S}$ measures the fraction of edges that points outside the
-cluster
+cluster \cite{good04,shi2000}
 \item \textbf{Expansion}: $f(S) = \frac{c_S}{n_S}$ measures the number of edges per node that point outside the
-cluster
+cluster \cite{radi04}
 \item \textbf{Internal density}: $f(S) = 1 - \frac{m_S}{n_S(n-n_S)}$ is the fraction of all possible edges leaving
-the cluster
+the cluster \cite{radi04}
 \item \textbf{Cut Ratio}: f(S) = $\frac{c_S}{n_S(n-n_S)}$ is the fraction of all possible edges leaving the cluster 
-\item \textbf{Normalized Cut}:  f(S) = $\frac{c_S}{2m_S+c_S} + \frac{c_S}{2(m-m_S)+c_S}$
+\item \textbf{Normalized Cut}:  f(S) = $\frac{c_S}{2m_S+c_S} + \frac{c_S}{2(m-m_S)+c_S}$ \cite{shi2000}
 \end{itemize}
 
 \subsection{Single-criterion scores}

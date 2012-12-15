@@ -14,7 +14,7 @@
 % The file aaai.sty is the style file for AAAI Press 
 % proceedings, working notes, and technical reports.
 %
-\title{Probability Based Partitioning of Online Social Networks}
+\title{Hop Probability Based Partitioning of Online Social Networks}
 \author{Vivek Mahajan\\
 vmahajan@sfu.ca\\
 }
@@ -24,7 +24,7 @@ vmahajan@sfu.ca\\
 Online social networking has  become a phenomenon in the last few years. The
 growing usage of social networks has put the service providers under a lot of
 pressure to efficiently process the users queries.  In social networks like
-orkut, most of the queries access the immediate neighbors of the current node
+facebook, most of the queries access the immediate neighbors of the current node
 and neighbors of its neighbors.  Existing graph partitioning approaches focus
 on reducing the number of inter server links, neglecting the query patterns.
 Our algorithm focuses on partitioning the graph so as to minimize the number of
@@ -46,30 +46,28 @@ reported that OSNs account for 10\% of all the Internet time worldwide. The
 growth can be appreciated by the fact that there was 1382\% increase in the
 user base of twitter in one month[Feb-Mar 09]
 \footnote{http://blog.nielsen.com/nielsenwire/onlinemobile/twitters-tweet-smell-of-success}.
-There can be variations of OSNs in terms of usability e.g On orkut, the users
-interact with each other by exchanging scraps or photographs, while on
-SLASHDOT, the users interact via blogs. Facebook, LinkedIn are other examples
+There can be variations of OSNs in terms of usability e.g On facebook, the users
+interact with each other by posting on the walls or sharing photographs, while on
+SLASHDOT, the users interact via blogs. LinkedIn and Google+ are other examples
 of OSNs.
 
     The phenomenal growth in the size of OSNs has given rise to scalability
 issues that can be solved by distributing online social network graph among
-different servers. However the basis of partitioning  is a major issue. That
+different servers. However finding the basis of partitioning  is a major issue. That
 is, the graph partitioning could be based on structural, geo-political or
 traffic properties, which are discussed in detail in \cite{arxviv} for twitter
 and orkut. In this paper, we introduce a new partitioning criterion called
-\texttt{hop based partitioning} which takes into consideration the typical
+\texttt{Hop probability based partitioning} which takes into consideration the typical
 nature of social network queries.
 
-\subsection{Hop Based Partitioning}
+\subsection{Hop probability Based Partitioning}
 
 Social network queries typically visit their one hop and two hop neighbors. The
-small world phenomenon links any two users on a social network with a distance
+small world phenomenon links any two users on a social network within a distance
 of six hops. Hence, while partitioning a social network, it would be beneficial
 to maintain the one-hop and two-hop neighbors of a frequented query node on the
 same server\footnote{through the rest of the paper the server and partition
-terms are used interchangeably} as itself. Further, it is expected that any
-graph partitioning algorithm attempts to reduce the inter server edges and
-equally distribute the data across servers.
+terms are used interchangeably} as itself.  
 
 For example, \cite{flickr} analyzed large-scale traces of information
 dissemination in the Flickr social network. Flickr allows users to create two
@@ -85,7 +83,7 @@ maximum distance between two persons is six hops. Hence, it is a reasonable
 assumption that a user interacts primarily within his 2-3 hop radius and at
 most his six hop radius.
 
-    In this project, we propose a novel probability based objective function
+    In this project, we propose a novel hop probability based objective function
 and  an algorithm to find the clusters which optimizes that. Given a social
 network graph $G$, our algorithm partitions the graph while meeting the
 following constraints:
@@ -129,52 +127,56 @@ linear time heuristics\cite{23} can also be used as refinement algorithms.
 
 
     In this paper, we  compare our results with METIS\cite{20}. METIS focuses
-on minimizing the cuts between the partitions as well as into roughly equal
+on minimizing the cuts between the partitions as well as into roughly equal sized
 partitions. The METIS algorithm is divided into three phases termed as
 coarsening, partitioning and uncoarsening/refinement.  The main motivation
 behind the algorithm is to generate an approximate graph of the original graph,
 partitioning it and then retracting the coarsening phase while doing the
 refinement between each iteration.  Our algorithm also follows a hierarchical
 clustering approach where repeated merging of clusters is done for some
-iteration and then the graph randomly partitioned with imposed contraints of
+iteration and then the graph is randomly partitioned with imposed contraints of
 having nearly equal partitions. Finally, the refinement algorithm is applied on
 the clusters thus obtained. We differ from METIS, in terms of our partitioning
-criterion, our novel way of clustering and partitioning, and  the modification
-and the method of refinement applied which is applied only once.
+criterion, our novel way of clustering, and  the modified form Kerinighan-Lin 
+algorithm which  refines the generated partitions.
 
-\section{Probability Based Objective Function}
+\section{Hop probability Based Objective Function}
 
    To calculate our objective function, we assume that there is an equal chance
 of each user of an OSN to come online. However, we can easily modify our
-objective function if we know the probability of each user coming online.
+objective function if we know the probability of each user to come online.
 
- Given some partitions, an evaluation criteria should be able to give a good
-index of the quality of partitions in terms of fraction of one and two hops
+ Given partitions of a graph, our evaluation criteria gives a good
+quantitative measure of the quality of partitions in terms of fraction of one and two hops
 lying outside the partition and should also give importance to the past
-interaction between the users of OSNs. 
-  
-This index calculates the probability of one and two hops from a node to lie in different partition. 
+interaction between the users of OSNs. Essentially, our objective function
+calculates the average probability of one and two hops from a node to lie in different
+partition. 
 
 Formally, let $X$ = $\{x_1,x_2,x_3,\cdot\cdot\cdot,x_n\}$ be the nodes in an OSN, $x_i$ = $i^{th}\ node$, 
-$\{y_1, y_2, y_3,\cdot\cdot\cdot,y_j\}$ be the $j$ neighbors of $x_i$. Let $\{v_1, v_2, v_3, \cdot\cdot\cdot,
- v_j\}$ be the number of interactions between $x_i$ and its neighbors. And $V_i = \sum_{k\in j} v_k$.
- Let $Y^\prime$ be 
-the subset of neighbors of $x_i$ which lie in partition other than $x_i$'s. Let $Y^\prime = \{y_1^\prime, y_2^\prime, \cdot\cdot, y_k^\prime\}$. Let the interaction between $x_i$ and the users in this subset be  $V^\prime = \{v_1^\prime, v_2^\prime, \cdot\cdot, v_k^\prime\}$.
-$V_i^\prime = \sum_{p\in k} v_p^\prime$.
+$Y_i=\{y_1, y_2, y_3,\cdot\cdot\cdot,y_j\}$ be the $j$ neighbors of $x_i$. Let $V_i=\{v_1, v_2, v_3, \cdot\cdot\cdot,
+ v_j\}$ be the number of interactions between $x_i$ and its neighbors. And $|V_i| = \sum_{k\in j} v_k$.
+ Let $Y^\prime_i$ be 
+the subset of $Y_i$ which lie in partition other than $x_i$'s. Let $Y^\prime_i = \{y_1^\prime, y_2^\prime, \cdot\cdot, y_k^\prime\}$. 
+Let the interaction between $x_i$ and the users in this subset be  $V^\prime_i = \{v_1^\prime, v_2^\prime, \cdot\cdot, v_k^\prime\}$.
+$|V_i^\prime| = \sum_{p\in k} v_p^\prime$.
 
         Let $P_{x_i}^{1-hop}$ be the probability of one-hop neighbor of $x_i$ to lie in separate partition, and $P_{x_i}^{2-hop}$ be probability of two hops from $x_i^{th}$ node to lie in the separate partition.\\
-        Clearly, $P_{x_i}^{1-hop}= \frac{V_i^\prime}{V_i}$ \\
+        Clearly, $P_{x_i}^{1-hop}= \frac{|V_i^\prime|}{|V_i|}$ \\
         $P_{x_i}^{2-hop}=\frac{1}{Number\ of\ neighbors\ of\ x_i} * \displaystyle\sum_{k=1}^j P_{x_i y_k}$, \\
         where,\\
-        $P_{x_i y_k}$ = $\frac{v_k}{V_i}$* $P_{x_{k}}^{1-hop}$ =  Probability of two hop from  $x_{i}$ to lie  in a  partition other than  its own through $y_k$, if $x_i$ and $y_{k}$ are in the same partition.\\
+        $P_{x_i y_k}$ = $\frac{v_k}{|V_i|}$* $P_{x_{k}}^{1-hop}$ =  Probability of two hop from  $x_{i}$ to lie  in a  partition other than  its own through $y_k$, if $x_i$ and $y_{k}$ are in the same partition.\\
         $P_{x_i y_k}$ =  1 , if $x_i$ and $y_k$ are in the separate partition, as we assume if the one hop is on a different partition, it is almost
 certain that two hop lie in the same partition.\\
         $Probability\ Index=\frac{1}{Total\ number\ of\ nodes}*\displaystyle\sum_{i=1}^nP_{x_i}^{2-hop}$, $n$ is the total number of nodes.\\
 
 
         This probability index gives us an overall probability of a two hop
-query from a node to lie in the different partition. In the following section
-we will propose an algorithm which optimizes this objective function.
+query from a node to lie in the different partition. To the best of our
+knowledge this kind of evaluation of evaluation criteria has never been
+published before. This is quite novel in the sense it takes into account the
+user access patterns.  In the following section we will propose an algorithm
+which optimizes this objective function.
 
 \section{Our Algorithm}
 \begin{table*}[htb]
@@ -210,28 +212,27 @@ a randomized one\\
 \end{table*}
 
 In this section, we introduce our graph partitioning algorithm. A social
-network  partitioning algorithm is expected to reduce inter server accesses
-requiring neighbors and the neighbors of neighbors of a query nodes to be
-present in the same server as itself.  To reduce the partitioning overhead, it
-is important that inter server links be reduced while trying to maximize the
-number of nodes for which its one and two hop neighbors be on the same server
-as itself.  Further, in order to equally distribute the workload across servers
-and optimally use the servers used, it is essential that the partitions size
-should be approximately equal. Our algorithm attempts to fulfil the above
-requirements while attempting to maximize the number of nodes for which a
-majority of its one-hop neighbors and with next priority its 2-hop neighbors
-are included within the same server.  Our algorithm is divided into three
+network  partitioning algorithm is expected to reduce inter server accesses,
+requiring friends and the friends of friends of a query node to be present in
+the same server as itself.   Also, in order to equally distribute the workload
+across servers , it is essential that the partitions size should be
+approximately equal.
+
+
+ Our algorithm attempts to fulfil the above requirements
+while attempting to maximize the number of nodes for which a majority of its
+one-hop neighbors and with next priority its 2-hop neighbors are included
+within the same server.  Our algorithm is divided into three
 phases, namely the graph coarsening phase, partitioning phase and the
 refinement phase. The graph coarsening phase reduces the size of the original
 graph by some factor by clustering the nodes \emph{intelligently}.  A weight
 function is used in order to decide which nodes should be clustered  during the
 coarsening phase. In the partitioning phase, we randomly generate partitions of
-the coarsened graph. The refinement phase next reduces the inter partition
-edges by making slight modifications to the partitioned graph. We next give
-definitions of commonly used terms followed by a detailed description of each
-of the phases.
-
-
+the coarsened graph. Due to time constraint we decided to randomly generate the
+partitions. Alternatively, we can use traditional graph partitioning methods.
+In the next phase, which we call refinement phase we reduce the inter partition
+edges by using a Kernighan-Lin algorithm. We next give definitions of commonly
+used terms followed by a detailed description of each of the phases.
 
 \subsection{Definitions}
 \textbf {\it{Social Network Graph :} }The users in the social network form the
@@ -379,22 +380,25 @@ further gain in the edges between the partitions.
 To be precise, we change the definition of $\delta$$Q$ for us. In the
 Kernighan-Lin algorithm, $\delta$$Q$ is the change in the edges cuts between
 the partitions when the nodes are swapped. Let $a$, $b$ be two nodes that lie
-in different partitions. Let $I_a$ be the internal cost for $a$, i.e the
-neigbors of $a$ that lies in the same partition as of $a$ and  $E_a$ be the
-external cost for the node $a$, i.e the number of neighbors of $a$ that lie in
-the separate partition. Similarily $E_b$ and $I_b$ are the external cost and
-internal cost for the node $b$. Now let $D_a$ = $E_a$ - $I_a$ and $D_b$ = $E_b$
+in different partitions. Let $I_a$ be the internal cost for $a$, i.e the total
+number of interactions between $a$ and its friends which lie in the same
+partition and  $E_a$ be the external cost for the node $a$, i.e the total
+number of interaction between $a$ and its friends which lie in the separate
+partition. Similarily $E_b$ and $I_b$ are the external cost and internal cost
+for the node $b$. Now let $D_a$ = $E_a$ - $I_a$ and $D_b$ = $E_b$
 - $I_b$ , i.e the difference of external and internal costs. If $a$ and $b$ are
-interchanged then the gain i.e $\delta$$Q$ will be $D_a + D_b -2C_{a,b}$. We
+  interchanged then the gain i.e $\delta$$Q$ will be $D_a + D_b -2C_{a,b}$. We
 make changes in the internal, external and $C_{a,b}$ to fit our purpose of
 decreasing the probability of the two hops from one node lying in the different
 partitions. We define internal cost $I_{ap}$ as the probability of an edge of
 node $E_{ap}$ lying in the same partition as of $a$ ,external cost as
-probability of an edge of node $a$ lying in a separate partition. Hence,\\
-\begin{displaymath}I_{a}=\frac{I_a}{Degree\ of\ node\ a }\\\end{displaymath},
-\\\begin{displaymath}E_{a}=\frac{E_a}{Degree\ of\ node\ a}\\\end{displaymath}
-and\\ \begin{displaymath}2C_{a,b}=\frac{1}{Degree\ of\ node\
-a}+\frac{1}{Degree\ of\ node\ b}\\\end{displaymath}
+probability of an edge of node $a$ lying in a separate partition. Let $T_a$ be
+$Total\ number\ of\ interactions\ done\ by\ user\ a$ and $T_b$ be $Total\
+number\ of\ interactions\ done\ by\ user\ b$. And $I_{ab}$ be the number of
+interactions between $a$ and $b$. Hence,\\
+\begin{displaymath}I_{ap}=\frac{I_a}{T_a}\\\end{displaymath},
+\\\begin{displaymath}E_{ap}=\frac{E_a}{T_a}\\\end{displaymath} and\\
+\begin{displaymath}2C_{ap,bp}=\frac{I_{ab}}{T_a}+\frac{I_{ab}}{T_b}\\\end{displaymath}
 
 
     As the original Kernighan-Lin algorithm focuses on reducing the edges
@@ -406,12 +410,116 @@ edge cuts. The same approach could be applied to the linear heuristics from the
 feduccia and matthews algorithm\cite{23} which can make it more efficient in
 terms of time taken to refine the partitions.
  
+\begin{table*}[htb]
+\centering
+\caption{Datasets - statistics}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ Datasets& Nodes & Edges \\
+\hline
+Facebook& 63731 & 68885  \\
+\hline
+SOC-Epinions & 75879 & 508837   \\
+\hline
+SLASHDOT& 77360 & 905468  \\
+\hline
+\end{tabular}
+
+\label{fig:twopartcuts}
+\end{table*}
+\begin{table*}[htb]
+\centering
+\caption{Two Partitions - Evaluation Indexes}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+ &\multicolumn{2}{c|}{Our Algorithm}&\multicolumn{2}{c|}{METIS}\\
+\hline
+%\cline{2-5}
+ DataSets&Hop Probability score &Edge Cuts&Hop Probability Score&Edge Cuts\\
+\hline
+Facebook& 0.225316 & 0.273173  & 0.21507 & 0.269943\\
+\hline
+SOC-Epinions & 0.135977 & 0.304285  & 0.162591 & 0.313931\\
+\hline
+SLASHDOT& 0.37827 & 0.496867  & 0.438342 & 0.762978\\
+\hline
+\end{tabular}
+\label{fig:twopartindex}
+\end{table*}
+
 
 
 
 
 \section{Experiments and Results}
+We have picked three popular and reasonaably sized datasets to run our experiments on
+\begin{itemize}
+\item \textbf{Facebook Social Network}: Facebook is a true social networking
+site on which users interact by writing on the wallposts and sharing lots of
+media content. The dataset was collected between December 29th, 2008 and
+January 3rd, 2009, and between January 20th 2009 and January 22th 2009 from the
+Facebook New Orleans network. The original dataset is time stamped, mentioning
+when were the links made.  For our purposes we used it as an undirected graph
+giving no consideration to time stamp attribute.  We also have list of all the
+wall posts for Facebook New Orleans network. The dataset was anonymized and we
+only have information about which user posted on whose wall at what time. No
+posts content is provided. But this information was good enough to find the
+interactions between the users which forms the weights of the edges between the
+users.  So we build a graph in which nodes are represented by users and there's
+and edge between two nodes if those two users are friends and weights are the
+average number of interactions between the two users i.e average number of
+times they posted on each other's wall + 1. 1 is added as there were cases when
+two users were friends but they didn't interact with each other. So we decided
+on having edge weight as 1 by default. As atleast they interacted once when
+they accepted the friends request. The dataset was crawled by \cite{26}.
 
-\section{Conclusion}
+\item \textbf{Epinions Social Network}: This is who-trust-whom online social
+network of a general consumer review site Epinions.com. Members of the site can
+decide whether to "trust" each other.  All the trust relationships interact and
+for the web of trust which is then combined with review rating to determine
+which reviews are shown to the user. We construct a graph in which the users
+are represented by nodes and there is an edge between a user if they "trust"
+each other. Since we didn't have any user query access pattern information for
+this graph, we gave each edge a weight of 1. The
+dataset\footnote{http://snap.stanford.edu/data/soc-Epinions1.html} was first
+used in \cite{epi2003}.
+
+\item \textbf{Slashdot}: Slashdot is a technology related news website known
+for its specific user community.  The website features user submitted and
+editor evaluated current primarily technology oriented news.  In 2002 Slashdot
+introduced the Slashdot Zoo feature which allows users to tag each other as
+neighbors or foes.  The network contains friend/foe links between the users of
+Slashdot. Again, the users are nodes and a link between them indicates whether
+they are friend or foe. And edge weight is set to 1 as we don't have any access
+pattern information. The
+dataset\footnote{http://snap.stanford.edu/data/soc-Slashdot0811.html} was first
+introduced in \cite{25}.
+
+\end{itemize}
+
+We compare the hop probability based partitioning approach with METIS. We are
+considering only bipartitions in our results. The input graph to the two
+algorithms are same except the facebook graph. For our algorithm, the input
+Facebook graph is with edge weights based on  interactions between users, while
+input Facebook graph for METIS is with all the edge weights set to 1. The main
+reason is that METIS doesn't take edge weights as input, so we can't provide it
+with that. We also have a reasonable contraint that the partitions should be of
+roughly equal size. We compare the two algorithms on edges cuts and hop
+probability based evaluation criteria. As we can see the periliminary results
+are quite close to METIS in terms of edge cuts as well the novel criteria. We
+think that some more experimentation with the weight function, partitioning
+algorithm(here we are doing random partitioning) and the refinement algorithm,
+might result in better results. 
+\section{Conclusion and Future Work}
+In this paper, our focus was to partition an Online Social Network graph such
+that the probability of query(one-hop/two-hop) generated from a user lying in
+different partition is reduced. We proposed a novel criteria for evaluating the
+partitions and presented a hierarchical algorithm optimizing that criteria. Our
+preliminary results looks promising. We plan to further improve it by 
+analyzing the graph formation at each level and also by experimenting with the
+weight function as well as the partitioning function. Refinement algorithm can
+be changed as well. As we don't know whether the modified Kernighan Lin
+algorithm will surely converge. I plan to work on this a little more and maybe
+submit it as a short paper in some conference/workshop.
 \bibliographystyle{aaai} \bibliography{xbib}
 \end{document}
