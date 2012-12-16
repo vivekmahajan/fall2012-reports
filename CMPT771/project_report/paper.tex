@@ -93,7 +93,7 @@ following constraints:
 \end{itemize} 
 
 The paper is organized as follows. The related works is shown in section 2, the
-objective function in exaplained in section 3, We describe our algorithm  in
+objective function in explained in section 3, We describe our algorithm  in
 section 4 and  experimental results are shown in section 5.  Finally, we
 conclude the paper in section 6.
 
@@ -134,12 +134,14 @@ behind the algorithm is to generate an approximate graph of the original graph,
 partitioning it and then retracting the coarsening phase while doing the
 refinement between each iteration.  Our algorithm also follows a hierarchical
 clustering approach where repeated merging of clusters is done for some
-iteration and then the graph is randomly partitioned with imposed contraints of
+iteration and then the graph is randomly partitioned with imposed constraints of
 having nearly equal partitions. Finally, the refinement algorithm is applied on
 the clusters thus obtained. We differ from METIS, in terms of our partitioning
-criterion, our novel way of clustering, and  the modified form Kerinighan-Lin 
-algorithm which  refines the generated partitions.
-
+criterion, our novel way of clustering, and  the modified form Kernighan-Lin 
+algorithm which  refines the generated partitions. In coarsening phase, our
+algorithm tries to collapse the nodes into clusters so as to minimize the
+evaluation criteria, while in METIS it doesn't take that into account. The refinement
+phase also focuses on minimizing the evaluation criteria. 
 \section{Hop probability Based Objective Function}
 
    To calculate our objective function, we assume that there is an equal chance
@@ -203,7 +205,7 @@ traditional approach towards graph partitioning, in our algorithm  we are using\
 a randomized one\\
 
 \textbf{Phase 2 - Refining}\\
- Refine the partitions using kenighan-Lin algorithm or the modified one.\\
+ Refine the partitions using Kernighan-Lin algorithm or the modified one.\\
 \hline
 \end{tabular}
 %\vskip -0.1in
@@ -245,7 +247,7 @@ on in case of triangles present in the graph
 \subsection{Coarsening Phase}
 
 The aim of this phase is to produce an approximate partitioning of the original
-graph. Our approach is a heirarchical one.  We start with the original graph
+graph. Our approach is a hierarchical one.  We start with the original graph
 and then we try to reduce the graph size by \emph{intelligently} clustering
 nodes at each level. After clustering nodes, we form a new graph with clusters
 from the previous level treated as nodes in the current level. After repeating
@@ -261,7 +263,7 @@ continue our discussion with the explanation of the refining algorithm.
 Graph  $G$=$(V,E)$, where $V$ = $\{v_1,v_2,v_3,\cdot\cdot\cdot,v_n\}$ ,$v_i$ represents a cluster of nodes. 
 In the first level, $v_i$ consists of only single node and $E$ is the edge set which consists of $e_{ij}$ i.e the number of interactions between the $v_i$ and $v_j$ i.e for any $v_i$ and $v_j$,if there are $k$ edges between 
 the two then $e_{ij}$ will be equal to $k$, for the first level $e_{ij}=number\ of\ interactions\ between\ v_i\ and\ v_j$.\footnote{number of interactions might the average number of times user $v_i$ and $v_j$ have interacted
-with eachother} 
+with each other} 
 
 \end{itemize} % 1
 
@@ -350,7 +352,7 @@ set $E_i$ of the graph $G_i$.
 
 \subsection{Partitioning Phase}
 After coarsening the graph, we can apply any traditional graph partitioning
-approaches to partitiong it. In our case, we are randomly select nodes and put
+approaches to partition it. In our case, we are randomly select nodes and put
 them in partitions. While partitioning we also make sure that the size of does
 not differ by large quantity i.e they should be of nearly equal size.
 %\end{itemize} % 1
@@ -362,7 +364,7 @@ partition of the graph. To refine the partitions, we use a modified form of
 Kernighan-Lin algorithm\cite{22}.
 
 
-    The Kernighan-Lin algorithm starts with initial bipartitions of the graph
+    The Kernighan-Lin algorithm starts with initial Bi-partitions of the graph
 and then iteratively optimizes it using a greedy approach. The Kernighan-Lin
 algorithm is divided into two phases, in the first phase, we consider a pair of
 nodes, with each nodes from different partitions. Now, a gain value $\delta$$Q$
@@ -384,7 +386,8 @@ in different partitions. Let $I_a$ be the internal cost for $a$, i.e the total
 number of interactions between $a$ and its friends which lie in the same
 partition and  $E_a$ be the external cost for the node $a$, i.e the total
 number of interaction between $a$ and its friends which lie in the separate
-partition. Similarily $E_b$ and $I_b$ are the external cost and internal cost
+partition. $C_{a,b}$ is the average number of interactions
+between user $a$ and $b$. Similarily $E_b$ and $I_b$ are the external cost and internal cost
 for the node $b$. Now let $D_a$ = $E_a$ - $I_a$ and $D_b$ = $E_b$
 - $I_b$ , i.e the difference of external and internal costs. If $a$ and $b$ are
   interchanged then the gain i.e $\delta$$Q$ will be $D_a + D_b -2C_{a,b}$. We
@@ -396,18 +399,18 @@ probability of an edge of node $a$ lying in a separate partition. Let $T_a$ be
 $Total\ number\ of\ interactions\ done\ by\ user\ a$ and $T_b$ be $Total\
 number\ of\ interactions\ done\ by\ user\ b$. And $I_{ab}$ be the number of
 interactions between $a$ and $b$. Hence,\\
-\begin{displaymath}I_{ap}=\frac{I_a}{T_a}\\\end{displaymath},
+\begin{displaymath}I_{ap}=\frac{I_a}{T_a},\\\end{displaymath}
 \\\begin{displaymath}E_{ap}=\frac{E_a}{T_a}\\\end{displaymath} and\\
 \begin{displaymath}2C_{ap,bp}=\frac{I_{ab}}{T_a}+\frac{I_{ab}}{T_b}\\\end{displaymath}
 
 
     As the original Kernighan-Lin algorithm focuses on reducing the edges
 between the partitions, our modified one reduces the probability of one hop of
-the nodes to lie in the separate partition.  The rest of the kernighan-Lin
+the nodes to lie in the separate partition.  The rest of the Kernighan-Lin
 algorithm works in the original way. Experiments shows that it not only reduces
 the probability of one hop to lie outside the partitions but also decreases the
 edge cuts. The same approach could be applied to the linear heuristics from the
-feduccia and matthews algorithm\cite{23} which can make it more efficient in
+feduccia and Mathews algorithm\cite{23} which can make it more efficient in
 terms of time taken to refine the partitions.
  
 \begin{table*}[htb]
@@ -435,13 +438,13 @@ SLASHDOT& 77360 & 905468  \\
  &\multicolumn{2}{c|}{Our Algorithm}&\multicolumn{2}{c|}{METIS}\\
 \hline
 %\cline{2-5}
- DataSets&Hop Probability score &Edge Cuts&Hop Probability Score&Edge Cuts\\
+ Datasets&Hop Probability score &Edge Cuts&Hop Probability Score&Edge Cuts\\
 \hline
-Facebook& 0.225316 & 0.273173  & 0.21507 & 0.269943\\
+Facebook& 0.042590 & 87642  & 0.031047 & 68315\\
 \hline
-SOC-Epinions & 0.135977 & 0.304285  & 0.162591 & 0.313931\\
+SOC-Epinions & 0.192315 & 62544  & 0.163753 & 55104\\
 \hline
-SLASHDOT& 0.37827 & 0.496867  & 0.438342 & 0.762978\\
+SLASHDOT& 0.398257 & 113356  & 0.438645 & 81465 \\
 \hline
 \end{tabular}
 \label{fig:twopartindex}
@@ -452,10 +455,10 @@ SLASHDOT& 0.37827 & 0.496867  & 0.438342 & 0.762978\\
 
 
 \section{Experiments and Results}
-We have picked three popular and reasonaably sized datasets to run our experiments on
+We have picked three popular and reasonably sized datasets to run our experiments on
 \begin{itemize}
 \item \textbf{Facebook Social Network}: Facebook is a true social networking
-site on which users interact by writing on the wallposts and sharing lots of
+site on which users interact by writing on the wall-posts and sharing lots of
 media content. The dataset was collected between December 29th, 2008 and
 January 3rd, 2009, and between January 20th 2009 and January 22th 2009 from the
 Facebook New Orleans network. The original dataset is time stamped, mentioning
@@ -470,8 +473,11 @@ and edge between two nodes if those two users are friends and weights are the
 average number of interactions between the two users i.e average number of
 times they posted on each other's wall + 1. 1 is added as there were cases when
 two users were friends but they didn't interact with each other. So we decided
-on having edge weight as 1 by default. As atleast they interacted once when
-they accepted the friends request. The dataset was crawled by \cite{26}.
+on having edge weight as 1 by default. As at-least they interacted once when
+they accepted the friends request. The dataset was crawled by \cite{26}. We have chosen
+this dataset as it is one of the few Facebook datasets provided on the web, which also has
+the wall-posts information during that period. That gives us a close approximate of
+the users interaction amongst each other.
 
 \item \textbf{Epinions Social Network}: This is who-trust-whom online social
 network of a general consumer review site Epinions.com. Members of the site can
@@ -496,20 +502,26 @@ dataset\footnote{http://snap.stanford.edu/data/soc-Slashdot0811.html} was first
 introduced in \cite{25}.
 
 \end{itemize}
-
 We compare the hop probability based partitioning approach with METIS. We are
-considering only bipartitions in our results. The input graph to the two
+considering only Bi-partitions in our results. The input graph to the two
 algorithms are same except the facebook graph. For our algorithm, the input
 Facebook graph is with edge weights based on  interactions between users, while
-input Facebook graph for METIS is with all the edge weights set to 1. The main
-reason is that METIS doesn't take edge weights as input, so we can't provide it
-with that. We also have a reasonable contraint that the partitions should be of
+input Facebook graph for METIS is with all the edge weights set to 1.
+We also have a reasonable constraint that the partitions should be of
 roughly equal size. We compare the two algorithms on edges cuts and hop
-probability based evaluation criteria. As we can see the periliminary results
+probability based evaluation criteria. 
+
+As we can see the preliminary results
 are quite close to METIS in terms of edge cuts as well the novel criteria. We
 think that some more experimentation with the weight function, partitioning
 algorithm(here we are doing random partitioning) and the refinement algorithm,
-might result in better results. 
+might result in better results. Given the time span for the course project,
+we thought of running our algorithm on relatively small graphs. We wanted to check the performance
+in terms of edge cuts and the probability based evaluation criteron. We feel that
+since the first iteration of the algorithm gave us quite close results, we beleive further improvement
+over them will beat the more refined $METIS$ algorithm which took few years to develop. 
+
+
 \section{Conclusion and Future Work}
 In this paper, our focus was to partition an Online Social Network graph such
 that the probability of query(one-hop/two-hop) generated from a user lying in
@@ -519,7 +531,9 @@ preliminary results looks promising. We plan to further improve it by
 analyzing the graph formation at each level and also by experimenting with the
 weight function as well as the partitioning function. Refinement algorithm can
 be changed as well. As we don't know whether the modified Kernighan Lin
-algorithm will surely converge. I plan to work on this a little more and maybe
-submit it as a short paper in some conference/workshop.
+algorithm will surely converge. We also want to compare the algorithm 
+with variety of graph partitioning algorithm other than METIS and also design 
+an algorithm for generating $k$ partitions. I plan to work on this a little more and 
+ eventually submit it as a workshop paper in ICWSM'13.
 \bibliographystyle{aaai} \bibliography{xbib}
 \end{document}

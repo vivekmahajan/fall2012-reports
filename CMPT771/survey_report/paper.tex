@@ -20,23 +20,20 @@
 vmahajan@sfu.ca\\
 }
 \maketitle
-\begin{abstract}
-\begin{quote}
+\section*{Abstract}
 Detecting clusters or communities in large real-world graphs such as large
 social or information networks is a problem of considerable interest. In
 general, it is the organization of vertices in clusters, with many edges
 joining vertices of the same cluster and comparatively few edges joining
 vertices of different clusters.  In practice, one typically chooses an
-objective function that captures the intution as given by the definition above,
+objective function that captures the intuition as given by the definition above,
 and then one applies approximation algorithms or heuristics to extract sets of
 nodes which appears to be "good" with respect to that objective function.
 
 In this survey, we will start with the applications of clustering in various
-domains. We will describle various objective functions and will also discuss
+domains. We will describe various objective functions and will also discuss
 some of the most cited community finding papers. 
 
-\end{quote}
-\end{abstract}
 
 \section{Introduction}
 The origin of graph theory dates back to Euler's solution of the puzzle of
@@ -50,7 +47,7 @@ computational resources, researchers can process and analyze huge amount of
 data, which wasn't possible in earlier times.
 
 Graphs representing real systems are more often not regular graphs. Some are
-random graph with higly homogeneous degree distribution. Real networks are not
+random graph with highly homogeneous degree distribution. Real networks are not
 random graphs, as they display inhomogeneities, revealing a high level of order
 and organization, in which high degree vertices can co-exist with low degree
 vertices. Furthermore, the distribution of edges is not only globally, but also
@@ -71,19 +68,19 @@ properties.
 The communities exists in society, like families, working and friendship
 circles, towns, nations etc.  The ubiquity of Internet has also resulted into
 creation of virtual groups like online communities in social networks like
-Facebook or Linkedin. Communities also occur in many networked systems from
+Facebook or LinkedIn. Communities also occur in many networked systems from
 biology, computer science, economics, politics etc.  In protein-protein
 interaction networks, communities are likely to group proteins having the same
 functional property in the cell. In WWW the may correspond to groups of pages
 dealing with same related topics, and so on.
 
 
-In WWW, clustering users who hvae similar interests and who are geografically
+In WWW, clustering users who have similar interests and who are geographically
 near to each other may improve the performance of services provided on the
 World Wide Web, where each cluster of clients could be served by a dedicated
-mirror server. Clustering can be used  to generate reccomendations on
+mirror server. Clustering can be used  to generate recommendations on
 e-commerce websites, e.g users with similar interests can be clustered and
-could be given appropriate reccomendation.  Clusters in large sparse graphs can
+could be given appropriate recommendation.  Clusters in large sparse graphs can
 be used to create data structures in order to efficiently store the graph data
 and to handle navigational queries, like path searches. It can also used in
 case of Ad hoc networks, as they normally don't maintain a central routing
@@ -96,34 +93,34 @@ algorithms in different disciplines.
 
 The first analysis of community structure was carried out by Weiss et al. in
 1957, who searched for group of workers in a government agency. Even earlier
-work was done in finding cluters of people in small political bodeis, based on
+work was done in finding clusters of people in small political bodies, based on
 the similarity of their voting pattern.
 
 Finding graph communities is also popular in computer science. In parallel
 computing, it is quite common to find out the best way to allocate tasks to
 processors so as to minimize the communications between them. This is also
-called graph partitioning problem which will be dicussed in the later sections.
+called graph partitioning problem which will be discussed in the later sections.
 In a seminal paper appeared in 2002, Girvan and Newman proposed a new algorithm
 for finding the edges lying between communities and iteratively removing them
 to find the clusters \cite{new2002}. After this paper, the field was revived and people
 gave lots of sophisticated algorithms to tackle this problem.
 
-In this survery, we try to cover some of the most popular algorithms in this
-area. We start with giving some examples of communities in Real-world networks.
+In this survey, we try to cover some of the most popular algorithms in this
+area. %We start with giving some examples of communities in Real-world networks.
 In section 2, we will give definition of various objective functions used
-nowaday. We will continue the discussion with explaining one of the most widely
+nowadays. We will continue the discussion with explaining one of the most widely
 used objective function in section 3. Followed by explanation of some
 traditional approaches in section 5, 6, 7 and 8. We will then give a brief
 overview of a more recent method in section 9 and then we will conclude in
 section 10.
-\subsection{Communities in Real-World Networks}
+%\subsection{Communities in Real-World Networks}
 \section{Objective Functions}
 If you have clusters of a given graph as an output of a clustering algorithm,
 we need to have some quantitative measure of how "good" they are. We call them
-objective function which the algorithms try to optimize. The intution behind
+objective function which the algorithms try to optimize. The intuition behind
 most of the objective functions is that a good cluster has many edges
 internally and few edges pointing outside. In this section, we look at the
-other objective functions that are based on this intution.
+other objective functions that are based on this intuition.
 
 
 In general, the two criterias contributes heavily to the formulation of
@@ -157,13 +154,13 @@ the cluster \cite{radi04}
 \end{itemize}
 
 \subsection{Single-criterion scores}
-As described earlier Single criterian scores are the scores which uses one of
+As described earlier Single criterion scores are the scores which uses one of
 the criterias to give a quantitative measure for the "goodness" of the
 communities. One of the most widely used criteria is Modularity
 \cite{newmod2006} which measure the number of within community edges, relative
 to a null model of a random graph with the same degree distribution.
 
-Here are few more single criterian scores
+Here are few more single criterion scores
 \begin{itemize}
 \item \textbf{Modularity}: $\frac{1}{4m}(m_S-E(m_S))$, where $E(m_S)$ is the expected number of edges between
 the nodes in set $S$ in a random graph with the same degree distribution.
@@ -176,9 +173,21 @@ rest of the network
 \end{itemize}
 
 \section{Modularity}
-
-
-
+One of the most popular objective function is Modularity \cite{new2004}. It is
+based on the intuition that a random graph is not expected to have a cluster
+structure. So one could tell the quality of the clusters by comparing the edge
+distribution inside the cluster with that of a random subgraph. This expected 
+expected edge density is given by a \emph{null model}. It is the original graph
+with some of its original structural properties but without any community structure.
+Formally, modularity is
+\begin{equation} Q = \frac{1}{2m}\sum_{ij}(A_{ij}-P_{ij})\delta(C_i,C_j),\end{equation}
+where $A$ is the adjacency matrix, $m$ is the total number of edges of the
+graph, and $P_{ij}$ is the expected number of edges between vertices $i$ and
+$j$ in the null model. The $\delta$ is 1 if vertices $i$ and $j$ are in the
+same community. The null model selection is subjective and lot of research has
+been done on it. One simple model could be that the graph keeps the same number
+of edges as the original graph, and that edges are placed with the same
+probability between any pair of vertices.
 
 
 
@@ -213,7 +222,7 @@ partitioning and layout, and in solving partial differential equations as well.
 Most of the variations are NP-hard. As a result there are lots of heuristics
 that does pretty good job. Most of the algorithms perform a bisection of the
 graph. However, partitioning into more than two clusters can be achieved by
-iterative bisectioning. 
+iterative Bi-sectioning. 
 
 The \emph{Kernighan-Lin algorithm} \cite{kerni70} is one of the earliest
 algorithms proposed and is still widely used as a last step of various graph
@@ -246,7 +255,7 @@ algorithm.
 
 In general, the algorithms used for graph partitioning are not good for finding
 communities, as it is necessary to provide the number of partitions and the
-size of partitions as an input, which is quite unintutive in case of finding
+size of partitions as an input, which is quite unintuitive in case of finding
 communities. Instead, we would except a community finding algorithm to give
 that as an output.  
 
@@ -256,11 +265,11 @@ that as an output.
 %\begin{minipage}[htb]{0.48\linewidth}
 \includegraphics[scale=0.30]{pics/heiro.eps}
 \caption{A dendogram, or hierarchical tree. Horizontal cut correspond to
-partitions of the graph in communites} \label{fig:heiro}
+partitions of the graph in communities} \label{fig:heiro}
 %\end{minipage}
 \end{figure}
 \section{Hierarchical Clustering} In general, we don't know much about the
-community strcuture of a graph. It is highly unlikely to know the number of
+community structure of a graph. It is highly unlikely to know the number of
 communities in a graph as well the size of it. In such cases, the graph
 partitioning approaches can only be used on a hit and trial basis, where you
 experiment with the input to the partitioning algorithm. On the other hand, the
@@ -285,15 +294,15 @@ single linkage clustering, the similarity between two groups is the minimum
 element $x_{ij}$, with $i$ in one group and $j$ in the other. On the other
 hand, in complete linkage clustering maximum element $x_{ij}$ is used. while in
 average linkage clustering we need to compute the average of $x_ij$.
-\ref{fig:heiro} gives a good illustration of a hierarchical algorithm. The red
+Figure \ref{fig:heiro} gives a good illustration of a hierarchical algorithm. The red
 line in the figure denotes a stopping conditions which can be imposed based on
 the number of vertices in partitions or other objective function. 
 
 The main advantage of using a hierarchical clustering is that it does not
 require a preliminary knowledge on the number and size of the clusters. On the
-other hand, it does not provide any stopping criterian on its own. Also, the
+other hand, it does not provide any stopping criterion on its own. Also, the
 results depends on the similarity criteria chosen. It also produces an
-\emph{artifical} hierarchial tree, even if a graph doesn't have any hierarchy
+\emph{artificial} hierarchical tree, even if a graph doesn't have any hierarchy
 in it. Also it is often the case that a node with only one neighbor forms a
 separate cluster, which is not good. However, the main disadvantage is it does
 not scale well.  Computing the similarity matrix is most expensive with best
@@ -302,33 +311,33 @@ case of $O(n^2)$ in case of single linkage, while $O(n^2 log\ n)$ in other.
 
 \begin{figure}
 \includegraphics[scale=0.30]{pics/edgeb.eps}
-\caption{Edge betweenness is higest for edges connecting communities. As you
+\caption{Edge betweenness is highest for edges connecting communities. As you
 can see in this figure the edge connecting the two communities will have much
-higher edge betweeness than the rest of the edges as all the shortest paths
+higher edge betweenness than the rest of the edges as all the shortest paths
 connecting vertices of the two communities run through it.} \label{fig:edge}
 \end{figure}
 
 \subsection{Divisive Approach}
 This is just the opposite of Agglomerative approach. Here we start with the
 original graph and consider them in one cluster and then iteratively remove
-edges based on some dissimilarity measure. The intution is, if we remove the
+edges based on some dissimilarity measure. The intuition is, if we remove the
 edges that lie between the communities first, then we have our clusters.
 
-\subsubsection{Edge betweeness and Community structure}
+\subsubsection{Edge betweenness and Community structure}
 The most popular divisive hierarchical algorithm is proposed by Girvan and
 Newman\cite{new2002,new2004}. These were the seminal work which ignited new
 interest in the area of community detection and also opened this topic to
 physicists. In these papers, Girvan and Newman focussed on the concept of
-betweeness, which quantifies the participation of edges to a process. They
-considered edge betweeness, which is the number of shortest paths between all
-vertex pairs that run along the edge. The inutition behind this is the edges
-which lies between communities will have high edge betweeness value. So
+betweenness, which quantifies the participation of edges to a process. They
+considered edge betweenness, which is the number of shortest paths between all
+vertex pairs that run along the edge. The intuition behind this is the edges
+which lies between communities will have high edge betweenness value. So
 removing them will results into separation of the communities. This forms the
 basis of their algorithm. Here are the steps:-
 \begin{enumerate}
 \item Calculate the betweenness for all edges in the network
 \item Remove the edge with the highest betweenness
-\item Recalculate betweennesses for all edges affected by the removal
+\item Recalculate betweenness for all edges affected by the removal
 \item Repeat from step 2 until no edges remain
 \end{enumerate}
 The naive algorithm doesn't scale very well. It is known that the worst case
@@ -346,7 +355,7 @@ between points. Some of the most popular cost functions are
 
 \begin{itemize}
 \item \textbf{Minimum k-clustering}: This represent the diameter of a cluster,
-which is the largest distance between two points of a cluster. The inution
+which is the largest distance between two points of a cluster. The intuition
 behind this is to keep the clusters compact so that the diameter is minimized.
 \item \textbf{k-clustering sum}:Same as above, but the diameter is replaced by
 the average distance between all pairs of points of a cluster.
@@ -358,7 +367,7 @@ largest value of $d_i$.
 average distance.
 \end{itemize}
 
-One of the most popular partitional algorithm is \emph{k-means clustering}
+One of the most popular Partitional algorithm is \emph{k-means clustering}
 \cite{kmeans67}. The cost function in this technique is the square error
 function given below. \\ \begin{equation} \sum_{i=1}^k \sum_{x_j \in S_i} ||x_j
 - c_i||^2 \end{equation} where $S_i$ indicates the set of points in i-th
@@ -366,20 +375,21 @@ function given below. \\ \begin{equation} \sum_{i=1}^k \sum_{x_j \in S_i} ||x_j
 algorithms proposed by Lloyd \cite{loyd82}. Given data points, we need to find
 $k$ clusters. The algorithm starts with choosing the $k$ centroids by some
 heuristics, most of them try to maximize the distance between them.
-In the first iteration, each vertex is assigned to the nrearest centroid. 
+In the first iteration, each vertex is assigned to the nearest centroid. 
 Then the centroids for each cluster is estimated with the help points in the
 clusters.  Then the process of assigning the vertex to nearest centroid and
-restimating centroids is repeated till convergence. The final output depends
-heavily on the choice of the intial $k$ centroids. This is the main reason why
+reestimating centroids is repeated till convergence. The final output depends
+heavily on the choice of the initial $k$ centroids. This is the main reason why
 people normally run this algorithms few times with different initialization and
 pick the clusters with minimum square function. The main reason why this
 heuristic is so popular is due to its quick convergence property which makes
 the analysis of large data sets fairly quick.
 
 Another technique which is quite famous and is related to k-means clustering is
-\emph{fuzzy k-means clustering} \cite{bez84}. This algorithm is widely used in pattern  recognition. 
-The main motivation behind building this algorithm is that a point may belong to two or more clusters
-at the same time. The cost function is 
+\emph{fuzzy k-means clustering} \cite{bez84}. This algorithm is widely used in
+pattern  recognition.  The main motivation behind building this algorithm is
+that a point may belong to two or more clusters at the same time. The cost
+function is 
 
 \begin{equation}
 J_m = \sum_{i=1}^n \sum_{j=1}^k u_{ij}^m ||x_i-c_j||^2
@@ -394,7 +404,7 @@ than 1 and $c_j$ is the center of cluster $j$
 
 The matrix $u_{ij}$ is normalized such that the sum of the memberships of every
 point in all clusters yields 1. The membership $u_ij$ is related to the distance of point $i$ from the
-center of cluster $j$, as it is safe to assume that the larger this distance, the lowe $u_{ij}$. This
+center of cluster $j$, as it is safe to assume that the larger this distance, the lower $u_{ij}$. This
 can be expressed by the following relation
 
 \begin{equation}
@@ -407,7 +417,7 @@ corresponding elements of the membership matrix in consecutive iterations
 differ from each other by less than some predefined value. This again depends
 on the initial choice of the matrix $u_{ij}$.
 
-The main disadvantage of partitional clustering is the same as that of graph
+The main disadvantage of Partitional clustering is the same as that of graph
 partitioning algorithms i.e the number of clusters needs to be predefined and
 also one needs to find the embedding in the metric space if it not natural for
 some graphs.
@@ -419,27 +429,28 @@ the eigenvectors of the similarity matrix of the nodes or other matrices which
 are derived from it. To calculate the eigenvectors the matrix needs to be
 symmetric and non-negative. Similarity matrix can be derived from the set of
 points in the metric space or from a graph as well. Spectral clustering mainly
-consists of a tranformation of the initial set of objects into a set of points
+consists of a transformation of the initial set of objects into a set of points
 in space, whose coordinates are elements of eigenvectors. The resulting points
 are then clustered using the standard clustering techniques, like k-means
 clustering. The main motivation behind this is due to the fact that the 
 change of representation induced by the eigenvectors make the cluster
-prpoerties of the initial data more evident. In this way, spectral clustering
+properties of the initial data more evident. In this way, spectral clustering
 is able to separate data points into clusters which might not be very evident
 before applying this approach. 
 
-\begin{figure}
+\begin{figure*}
+\centering
 %\begin{minipage}[htb]{0.48\linewidth}
-\includegraphics[scale=0.25]{pics/spectral.eps}
+\includegraphics[scale=0.5]{pics/spectral.eps}
 \caption{This figure shows a graph with 5 nodes and its Laplacian and the
 corresponding eigen values and eigen vectors} \label{fig:spectral}
 %\end{minipage}
-\end{figure}
+\end{figure*}
 
 We will run through an example to show how to partition a graph using spectral
-clustering technique.  As given in \ref{fig:spectral}, we have a graph with
+clustering technique.  As given in Figure \ref{fig:spectral}, we have a graph with
 five nodes. The first step is to calculate its Laplacian. After that we
-calculate the eigenvalues and corresponding eigenvectors for the laplacian. And
+calculate the eigenvalues and corresponding eigenvectors for the Laplacian. And
 then we sort the points according to the eigenvectors corresponding to second
 highest eigenvalue. As we can see it is able to separate the nodes in blue from
 nodes in red.
@@ -487,8 +498,8 @@ Z= \int P(D|\{\theta\}) P(\{\theta\}) d\theta
 \end{equation}
 The most challenging part is computing the above integral and also the choice
 of the prior distribution is not very obvious. Hence, most of the algorithms
-related to generative modesl differ from each other by the choice of the model
-and the way they addres these two issues.
+related to generative models differ from each other by the choice of the model
+and the way they address these two issues.
 
 Bayesian inference is quite popular in the analysis and modelling of real
 graphs. Graph clustering can be considered a specific example of inference
@@ -498,5 +509,27 @@ forms the basis of several recent papers. Essentially, all of them maximizes
 the likelihood $P(D|\{\theta\})$ that the model is consistent with the observed
 graph structure. 
 
+\section{Conclusion}
+In this survey paper, we give a brief overview of different kinds of community
+finding algorithms and also discussed the advantages and disadvantages
+associated with them. The scope of this survey limits us to the given
+algorithms. But there are lot of different kind of modularity optimization
+based algorithms and algorithms based on spin models given by physicists and so
+on.
+
+However, by looking at the advent of research in this field, one can say that
+it has grown in a rather chaotic way, without any precise direction. There is
+no theoretical framework that defines what clustering algorithms are proposed
+to do. Different people have different idea of what clusters should be. Most of
+them are consistent with each other, but as long as there is an disagreement,
+it is difficult to find the best algorithm to find the clusters. One can say,
+that the large number of research papers in this field might be due to above
+given fact.
+
+There has been lot of research in this area and it is still going strong. It is quite
+possible hthat the scientific community will eventually converge to a formal definition
+of community. Most of the algorithms these days produce similar results, but the main
+question is still open what's the best algorithm and have we found the best methods to
+evaluate them?
 \bibliographystyle{aaai} \bibliography{bibfile}
 \end{document}
